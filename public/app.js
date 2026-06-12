@@ -155,7 +155,16 @@ socket.on('roundStarted', ({ assignment, timeLeft, players, phase, roundIndex, r
   gamePlayerLabel.textContent = players.length;
   trackTitle.textContent = assignment.song.title;
   trackCategory.textContent = `題目: ${assignment.category}`;
-  videoContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${assignment.song.videoId}?autoplay=1&controls=0&rel=0&playsinline=1" allow="autoplay; encrypted-media"></iframe>`;
+  // Insert a user-gesture play button first to avoid autoplay being blocked
+  videoContainer.innerHTML = '';
+  const playBtn = document.createElement('button');
+  playBtn.className = 'play-audio-btn';
+  playBtn.type = 'button';
+  playBtn.textContent = '點擊播放音樂';
+  playBtn.onclick = () => {
+    videoContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${assignment.song.videoId}?autoplay=1&controls=0&rel=0&playsinline=1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
+  };
+  videoContainer.appendChild(playBtn);
 
   let time = timeLeft;
   timeLeftLabel.textContent = time;
