@@ -30,6 +30,7 @@ const finishedView = document.getElementById('finishedView');
 const trackTitle = document.getElementById('trackTitle');
 const trackCategory = document.getElementById('trackCategory');
 const playPrompt = document.getElementById('playPrompt');
+const audioPlayer = document.getElementById('musicPlayer');
 const videoContainer = document.getElementById('videoContainer');
 const timeLeftLabel = document.getElementById('timeLeftLabel');
 const voteTimeLeftLabel = document.getElementById('voteTimeLeftLabel');
@@ -44,6 +45,13 @@ let voteButtons = [];
 let voteTimer = null;
 let voteCountdownTimer = null;
 let resultCountdownTimer = null;
+let audioGestureAllowed = false;
+const audioSources = {
+  '中文歌': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+  '西洋歌': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+  '日文歌': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+  '韓文歌': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3'
+};
 
 function showToast(message) {
   toastEl.textContent = message;
@@ -156,20 +164,38 @@ socket.on('roundStarted', ({ assignment, timeLeft, players, phase, roundIndex, r
   gamePlayerLabel.textContent = players.length;
   trackTitle.textContent = assignment.song.title;
   trackCategory.textContent = `題目: ${assignment.category}`;
-  // Insert a user-gesture play button first to avoid autoplay being blocked
   playPrompt.innerHTML = '';
   const playBtn = document.createElement('button');
   playBtn.className = 'play-audio-btn';
   playBtn.type = 'button';
-  playBtn.textContent = '點擊播放音樂';
+  playBtn.textContent = audioGestureAllowed ? '自動播放音樂' : '先點擊啟用音樂';
+
+  async function loadAndPlayAudio() {
+    const source = audioSources[assignment.category] || audioSources['中文歌'];
+    audioPlayer.src = source;
+    audioPlayer.loop = false;
+    audioPlayer.muted = false;
+    audioPlayer.volume = 1;
+    try {
+      await audioPlayer.play();
+      playPrompt.innerHTML = '<div class="subtext">音樂已啟動，請保持此頁面開啟。</div>';
+      audioGestureAllowed = true;
+    } catch (err) {
+      playPrompt.innerHTML = '<div class="subtext">若未播放，請再次點擊按鈕以啟用音樂。</div>';
+    }
+  }
 
   playBtn.onclick = () => {
-    // Directly insert the YouTube iframe during the user click event;
-    // this keeps playback within the user gesture and helps iOS Chrome.
-    videoContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${assignment.song.videoId}?autoplay=1&controls=0&rel=0&playsinline=1" width="1" height="1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
-    playPrompt.innerHTML = '<div class="subtext">音樂已啟動，請保持此頁面開啟。</div>';
+    if (!audioGestureAllowed) {
+      audioGestureAllowed = true;
+    }
+    loadAndPlayAudio();
   };
   playPrompt.appendChild(playBtn);
+
+  if (audioGestureAllowed) {
+    loadAndPlayAudio();
+  }
 
   let time = timeLeft;
   timeLeftLabel.textContent = time;
