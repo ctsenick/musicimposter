@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0c1426" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>音樂臥底</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page" id="entryPage">
+    <div class="card">
+      <h1>音樂臥底</h1>
+      <p>測試版：適合手機使用，iPhone / Android 可共同遊玩。建議多人使用不同裝置加入。</p>
+      <div class="form-row">
+        <label>暱稱</label>
+        <input id="nicknameInput" placeholder="你的名字" maxlength="12" />
+      </div>
+      <div class="form-row">
+        <button id="createRoomBtn">建立遊戲房間</button>
+      </div>
+      <div class="form-row">
+        <label>房號</label>
+        <input id="roomIdInput" placeholder="4 位房號" maxlength="4" />
+      </div>
+      <div class="form-row">
+        <button id="joinRoomBtn">加入主持人房間</button>
+      </div>
+      <div class="hint">房號由主持人建立後提供給其他玩家。</div>
+    </div>
+  </div>
+
+  <div class="page hidden" id="lobbyPage">
+    <div class="top-bar">
+      <div class="badge">房號 <span id="roomCodeLabel"></span></div>
+      <div class="badge">暱稱 <span id="playerLabel"></span></div>
+      <div class="badge">階段 <span id="lobbyPhaseLabel">等待中</span></div>
+    </div>
+    <div class="layout">
+      <section class="card lobby-card">
+        <h2>房間準備</h2>
+        <div id="hostControls" class="host-controls hidden">
+          <div class="form-row">
+            <label>題目曲風</label>
+            <select id="categorySelect">
+              <option>中文歌</option>
+              <option>西洋歌</option>
+              <option>日文歌</option>
+              <option>韓文歌</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>臥底人數</label>
+            <input id="impostorCountInput" type="number" min="1" max="3" value="1" />
+          </div>
+          <div class="form-row">
+            <label>遊戲局數</label>
+            <input id="roundCountInput" type="number" min="1" max="10" value="3" />
+          </div>
+          <button id="updateSettingsBtn">更新設定</button>
+          <button id="startGameBtn" class="primary">開始遊戲</button>
+        </div>
+        <div id="playerStatus" class="status-panel"></div>
+      </section>
+      <section class="card players-card">
+        <h2>玩家名單</h2>
+        <ul id="playerList"></ul>
+      </section>
+    </div>
+  </div>
+
+  <div class="page hidden" id="gamePage">
+    <div class="top-bar">
+      <div class="badge">回合 <span id="roundLabel"></span> / <span id="roundTotalLabel"></span></div>
+      <div class="badge">玩家 <span id="gamePlayerLabel"></span></div>
+    </div>
+    <div class="card game-card" id="gameStateCard">
+      <div id="playingView" class="game-view hidden">
+        <h2>聽音樂中</h2>
+        <div class="track-card">
+          <div class="track-title" id="trackTitle"></div>
+          <div class="track-category" id="trackCategory"></div>
+          <div class="subtext">已於背景自動播放音樂，請勿關閉或刷新頁面。</div>
+        </div>
+        <div id="videoContainer"></div>
+        <div class="timer">聽歌階段剩餘: <span id="timeLeftLabel"></span> 秒</div>
+      </div>
+      <div id="votingView" class="game-view hidden">
+        <h2>請投票猜誰是臥底</h2>
+        <div class="timer">投票剩餘: <span id="voteTimeLeftLabel"></span> 秒</div>
+        <div id="voteList"></div>
+      </div>
+      <div id="resultView" class="game-view hidden">
+        <h2>本局結果</h2>
+        <div id="resultSummary"></div>
+      </div>
+      <div id="finishedView" class="game-view hidden">
+        <h2>遊戲結束</h2>
+        <div id="finalResult"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
