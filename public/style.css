@@ -191,13 +191,27 @@ button:active {
   color: #bae6fd;
 }
 
-#videoContainer {
+#playPrompt {
+  margin: 18px 0 12px;
+}
+
+.play-audio-btn {
   width: 100%;
-  height: 0;
+  padding: 18px 16px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--accent), #a855f7);
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  border: none;
+}
+
+#videoContainer {
+  width: 1px;
+  height: 1px;
   overflow: hidden;
   opacity: 0;
   position: absolute;
-  pointer-events: none;
 }
 
 #videoContainer iframe {

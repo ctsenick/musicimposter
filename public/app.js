@@ -29,6 +29,7 @@ const resultView = document.getElementById('resultView');
 const finishedView = document.getElementById('finishedView');
 const trackTitle = document.getElementById('trackTitle');
 const trackCategory = document.getElementById('trackCategory');
+const playPrompt = document.getElementById('playPrompt');
 const videoContainer = document.getElementById('videoContainer');
 const timeLeftLabel = document.getElementById('timeLeftLabel');
 const voteTimeLeftLabel = document.getElementById('voteTimeLeftLabel');
@@ -156,7 +157,7 @@ socket.on('roundStarted', ({ assignment, timeLeft, players, phase, roundIndex, r
   trackTitle.textContent = assignment.song.title;
   trackCategory.textContent = `題目: ${assignment.category}`;
   // Insert a user-gesture play button first to avoid autoplay being blocked
-  videoContainer.innerHTML = '';
+  playPrompt.innerHTML = '';
   const playBtn = document.createElement('button');
   playBtn.className = 'play-audio-btn';
   playBtn.type = 'button';
@@ -166,8 +167,9 @@ socket.on('roundStarted', ({ assignment, timeLeft, players, phase, roundIndex, r
     // Directly insert the YouTube iframe during the user click event;
     // this keeps playback within the user gesture and helps iOS Chrome.
     videoContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${assignment.song.videoId}?autoplay=1&controls=0&rel=0&playsinline=1" width="1" height="1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
+    playPrompt.innerHTML = '<div class="subtext">音樂已啟動，請保持此頁面開啟。</div>';
   };
-  videoContainer.appendChild(playBtn);
+  playPrompt.appendChild(playBtn);
 
   let time = timeLeft;
   timeLeftLabel.textContent = time;
