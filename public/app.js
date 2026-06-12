@@ -162,56 +162,10 @@ socket.on('roundStarted', ({ assignment, timeLeft, players, phase, roundIndex, r
   playBtn.type = 'button';
   playBtn.textContent = '點擊播放音樂';
 
-  // Helper: create YouTube player via IFrame API and try to unmute after user gesture
-  function ensureYouTubeAPI(callback) {
-    if (window.YT && window.YT.Player) return callback();
-    const existing = document.getElementById('youtube-iframe-api');
-    if (!existing) {
-      const tag = document.createElement('script');
-      tag.id = 'youtube-iframe-api';
-      tag.src = 'https://www.youtube.com/iframe_api';
-      document.head.appendChild(tag);
-    }
-    const prev = window.onYouTubeIframeAPIReady;
-    window.onYouTubeIframeAPIReady = function () {
-      if (typeof prev === 'function') prev();
-      callback();
-    };
-  }
-
-  let ytPlayer = null;
   playBtn.onclick = () => {
-    ensureYouTubeAPI(() => {
-      videoContainer.innerHTML = '<div id="yt-player"></div>';
-      try {
-        ytPlayer = new YT.Player('yt-player', {
-          height: '1',
-          width: '1',
-          videoId: assignment.song.videoId,
-          playerVars: {
-            autoplay: 1,
-            controls: 0,
-            rel: 0,
-            playsinline: 1,
-            enablejsapi: 1,
-            modestbranding: 1,
-            mute: 0
-          },
-          events: {
-            onReady: (e) => {
-              setTimeout(() => {
-                e.target.playVideo && e.target.playVideo();
-                try { e.target.unMute && e.target.unMute(); } catch (err) {}
-                try { e.target.setVolume && e.target.setVolume(100); } catch (err) {}
-              }, 100);
-            }
-          }
-        });
-      } catch (err) {
-        // fallback to simple iframe if API creation fails
-        videoContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${assignment.song.videoId}?autoplay=1&controls=0&rel=0&playsinline=1&mute=0" width="1" height="1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
-      }
-    });
+    // Directly insert the YouTube iframe during the user click event;
+    // this keeps playback within the user gesture and helps iOS Chrome.
+    videoContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${assignment.song.videoId}?autoplay=1&controls=0&rel=0&playsinline=1" width="1" height="1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
   };
   videoContainer.appendChild(playBtn);
 
