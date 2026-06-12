@@ -185,27 +185,31 @@ socket.on('roundStarted', ({ assignment, timeLeft, players, phase, roundIndex, r
       videoContainer.innerHTML = '<div id="yt-player"></div>';
       try {
         ytPlayer = new YT.Player('yt-player', {
-          height: '0',
-          width: '0',
+          height: '1',
+          width: '1',
           videoId: assignment.song.videoId,
           playerVars: {
             autoplay: 1,
             controls: 0,
             rel: 0,
             playsinline: 1,
-            enablejsapi: 1
+            enablejsapi: 1,
+            modestbranding: 1,
+            mute: 0
           },
           events: {
             onReady: (e) => {
-              // Try to play and unmute after user gesture
-              e.target.playVideo && e.target.playVideo();
-              try { e.target.unMute && e.target.unMute(); } catch (err) {}
+              setTimeout(() => {
+                e.target.playVideo && e.target.playVideo();
+                try { e.target.unMute && e.target.unMute(); } catch (err) {}
+                try { e.target.setVolume && e.target.setVolume(100); } catch (err) {}
+              }, 100);
             }
           }
         });
       } catch (err) {
         // fallback to simple iframe if API creation fails
-        videoContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${assignment.song.videoId}?autoplay=1&controls=0&rel=0&playsinline=1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
+        videoContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${assignment.song.videoId}?autoplay=1&controls=0&rel=0&playsinline=1&mute=0" width="1" height="1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
       }
     });
   };
